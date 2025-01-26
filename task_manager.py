@@ -113,8 +113,8 @@ class TaskManagerApp:
         priority_combobox = ttk.Combobox(add_task_window, values=["High", "Medium", "Low"], state="readonly")
         priority_combobox.pack(fill=tk.X, padx=10, pady=5)
 
-        ttk.Label(add_task_window, text="Deadline (YYYY-MM-DD):").pack(padx=10, pady=5, anchor=tk.W)
-        deadline_entry = ttk.Entry(add_task_window)
+        ttk.Label(add_task_window, text="Deadline (DD-MM-YYYY):").pack(padx=10, pady=5, anchor=tk.W)
+        deadline_entry = DateEntry(add_task_window, date_pattern="dd-mm-yyyy")
         deadline_entry.pack(fill=tk.X, padx=10, pady=5)
 
         save_button = ttk.Button(add_task_window, text="Save", command=save_task)
