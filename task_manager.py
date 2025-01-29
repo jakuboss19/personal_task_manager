@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import sqlite3
 from tkcalendar import DateEntry
+from datetime import datetime
 
 # Initialize database connection
 def init_db():
@@ -99,6 +100,16 @@ class TaskManagerApp:
             add_task_window.destroy()
             self.load_tasks()
 
+        def validate_date(event):
+            """Validate date in calendar so its not possible to set deadline in past"""
+            selected_date = deadline_entry.get_date()
+            today = datetime.today().date()
+
+            if selected_date < today:
+                messagebox.showerror("Invalid date", "The deadline can't be in the past!")
+                deadline_entry.set_date(today)
+
+
         add_task_window = tk.Toplevel(self.root)
         add_task_window.title("Add Task")
 
@@ -114,9 +125,11 @@ class TaskManagerApp:
         priority_combobox = ttk.Combobox(add_task_window, values=["High", "Medium", "Low"], state="readonly")
         priority_combobox.pack(fill=tk.X, padx=10, pady=5)
 
-        ttk.Label(add_task_window, text="Deadline (DD-MM-YYYY):").pack(padx=10, pady=5, anchor=tk.W)
-        deadline_entry = DateEntry(add_task_window, date_pattern="dd-mm-yyyy")
+        ttk.Label(add_task_window, text="Deadline (YYYY-MM-DD):").pack(padx=10, pady=5, anchor=tk.W)
+        deadline_entry = DateEntry(add_task_window, date_pattern="yyyy-mm-dd")
         deadline_entry.pack(fill=tk.X, padx=10, pady=5)
+        deadline_entry.set_date(datetime.today().date()) 
+        deadline_entry.bind("<<DateEntrySelected>>", validate_date) 
 
         save_button = ttk.Button(add_task_window, text="Save", command=save_task)
         save_button.pack(pady=10)
