@@ -43,6 +43,14 @@ def delete_task(task_id):
     conn.commit()
     conn.close()
 
+def reset_autoincrement():
+    """Reset ID's when all tasks are deleted"""
+    conn = sqlite3.connect("tasks.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM sqlite_sequence WHERE name='tasks'")  
+    conn.commit()
+    conn.close()
+
 
 # Main Application Class
 class TaskManagerApp:
@@ -143,6 +151,10 @@ class TaskManagerApp:
 
         task_id = self.tree.item(selected_item[0], "values")[0]
         delete_task(task_id)
+        
+        if not fetch_tasks():
+            reset_autoincrement()
+        
         messagebox.showinfo("Success", "Task deleted successfully!")
         self.load_tasks()
 
