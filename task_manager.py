@@ -93,7 +93,7 @@ class TaskManagerApp:
         self.load_tasks()
 
     def open_add_task_window(self):
-        def save_task():
+        def on_save_task():
             title = title_entry.get()
             description = description_text.get("1.0", tk.END).strip()
             priority = priority_combobox.get()
@@ -139,11 +139,11 @@ class TaskManagerApp:
         deadline_entry.set_date(datetime.today().date()) 
         deadline_entry.bind("<<DateEntrySelected>>", validate_date) 
 
-        save_button = ttk.Button(add_task_window, text="Save", command=save_task)
+        save_button = ttk.Button(add_task_window, text="Save", command=on_save_task)
         save_button.pack(pady=10)
 
     def delete_selected_task(self):
-        # Delete selected task
+        """Delete selected task"""
         selected_item = self.tree.selection()
         if not selected_item:
             messagebox.showerror("Please select a task to delete!")
@@ -159,7 +159,7 @@ class TaskManagerApp:
         self.load_tasks()
 
     def load_tasks(self):
-        # Clear current tasks
+        """Clear current tasks"""
         for row in self.tree.get_children():
             self.tree.delete(row)
 
