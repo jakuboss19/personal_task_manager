@@ -83,8 +83,8 @@ class TaskManagerApp:
         self.add_button = ttk.Button(self.button_frame, text="Add Task", command=self.open_add_task_window)
         self.add_button.pack(side=tk.LEFT, padx=5)
 
-        self.add_button = ttk.Button(self.button_frame, text="Delete Task", command=self.delete_selected_task)
-        self.add_button.pack(side=tk.LEFT, padx=5)
+        self.delete_button = ttk.Button(self.button_frame, text="Delete Task", command=self.delete_selected_task)
+        self.delete_button.pack(side=tk.LEFT, padx=5)
 
         # self.refresh_button = ttk.Button(self.button_frame, text="Refresh", command=self.load_tasks)
         # self.refresh_button.pack(side=tk.LEFT, padx=5)
@@ -146,7 +146,7 @@ class TaskManagerApp:
         """Delete selected task"""
         selected_item = self.tree.selection()
         if not selected_item:
-            messagebox.showerror("Please select a task to delete!")
+            messagebox.showerror("Error","Please select a task to delete!")
             return
 
         task_id = self.tree.item(selected_item[0], "values")[0]
