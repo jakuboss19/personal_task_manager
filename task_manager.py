@@ -27,10 +27,24 @@ def add_task(title, description, priority, deadline):
     conn.close()
 
 # Fetch all tasks from the database
-def fetch_tasks():
+def fetch_tasks(order_by="deadline"):
     conn = sqlite3.connect("tasks.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM tasks")
+    if order_by == "priority":
+        cursor.execute("""
+            SELECT * FROM tasks
+            ORDER BY
+                CASE priority           # order by priority, not by alphabet
+                    WHEN 'High' THEN 1     
+                    WHEN 'Medium' THEN 2
+                    WHEN 'Low' THEN 3
+                END
+        """)
+    
+else:
+    cursor.execute(f"SELECT * FROM tasks ORDER BY {order_by}")
+    
+    
     tasks = cursor.fetchall()
     conn.close()
     return tasks
@@ -50,6 +64,7 @@ def reset_autoincrement():
     cursor.execute("DELETE FROM sqlite_sequence WHERE name='tasks'")  
     conn.commit()
     conn.close()
+    
 
 
 # Main Application Class
@@ -61,6 +76,15 @@ class TaskManagerApp:
         # Frame for Task List
         self.task_frame = ttk.Frame(self.root)
         self.task_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        # Option for sorting
+        self.sort_var = tk.StringVar(value="deadline")
+        sort_frame = ttk.Frame(self.root)
+        sort_frame.pack(fill=tk.X, padx=10, pady=5)
+        ttk.Label(sort_frame, text="Sort by:").pack(side=tk.LEFT)
+        sort_menu = ttk.Combobox(sort_frame, textvariable=self.sort_var, values=["priority", "deadline"], state="readonly")
+        sort_menu.pack(side=tk.LEFT, padx=5)
+        sort_menu.bind("<<ComboboxSelected>>", lambda e: self.load_tasks())
 
         # Treeview for tasks
         self.tree = ttk.Treeview(self.task_frame, columns=("ID", "Title", "Description", "Priority", "Deadline"), show="headings")
@@ -164,8 +188,17 @@ class TaskManagerApp:
             self.tree.delete(row)
 
         # Fetch tasks from the database and load into the Treeview
-        for task in fetch_tasks():
-            self.tree.insert("", tk.END, values=(task[0],task[1], task[2], task[3], task[4]))
+        for task in fetch_tasks(self.sort_var.get()):
+            row_id = self.tree.insert("", tk.END, values=(task[0], task[1], task[2], task[3], task[4]))
+            if task[3] == "High":
+                self.tree.item(row_id, tags=("high",))
+            elif task[3] == "Medium":
+                self.tree.item(row_id, tags=("medium",))
+            else:
+                self.tree.item(row_id, tags=("low",))
+        self.tree.tag_configure("high", background="red")
+        self.tree.tag_configure("medium", background="yellow")
+        self.tree.tag_configure("low", background="green")
 
 if __name__ == "__main__":
     init_db()
