@@ -84,7 +84,7 @@ class TaskManagerApp:
         ttk.Label(sort_frame, text="Sort by:").pack(side=tk.LEFT)
         sort_menu = ttk.Combobox(sort_frame, textvariable=self.sort_var, values=["priority", "deadline"], state="readonly")
         sort_menu.pack(side=tk.LEFT, padx=5)
-        sort_menu.bind("<<ComboboxSelected>>", lambda e: self.load_tasks())
+        sort_menu.bind("<<ComboboxSelected>>", self.on_sort_change )
 
         # Treeview for tasks
         self.tree = ttk.Treeview(self.task_frame, columns=("ID", "Title", "Description", "Priority", "Deadline"), show="headings")
@@ -114,6 +114,10 @@ class TaskManagerApp:
         # self.refresh_button.pack(side=tk.LEFT, padx=5)
 
         # Load tasks into the Treeview
+        self.load_tasks()
+
+    def on_sort_change(self, event):
+        """Handle sorting change event"""
         self.load_tasks()
 
     def open_add_task_window(self):
