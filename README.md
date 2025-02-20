@@ -2,6 +2,8 @@
 
 This is a simple Task Manager application built using Python and Tkinter for the graphical user interface (GUI). It allows users to manage tasks by adding, deleting, and sorting them based on priority or deadline. The application uses SQLite as the database to store tasks.
 
+There are also added files with html and css for front end use.
+
 Features
 
 Add tasks: Users can enter task details, including title, description, priority, and deadline
